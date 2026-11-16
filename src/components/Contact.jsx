@@ -2,12 +2,64 @@ import { useState } from "react";
 import { Mail, Phone, MapPin, Send, GitFork, Link2, MessageCircle } from "lucide-react";
 import { SectionHeader } from "./Skills";
 
-// Delivery targets for the form. FormSubmit emails the message; WhatsApp opens a
-// pre-filled chat so the same message also lands on the phone.
+// Delivery targets for the form. Web3Forms is the primary email API (its access
+// key is meant to be public, so it is safe in a static build); FormSubmit is kept
+// as a fallback for when VITE_WEB3FORMS_ACCESS_KEY is not configured. WhatsApp
+// opens a pre-filled chat so the same message also lands on the phone.
 const CONTACT_EMAIL = "donaabafashijwe@gmail.com";
 const CONTACT_PHONE = "+250792458446";
 const WHATSAPP_NUMBER = "250792458446";
 const EMAIL_ENDPOINT = `https://formsubmit.co/ajax/${CONTACT_EMAIL}`;
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+
+async function deliverByEmail(form, signal) {
+  if (WEB3FORMS_KEY) {
+    // FormData keeps this a CORS-safelisted request: a JSON content type would
+    // trigger a preflight that the API does not answer.
+    const body = new FormData();
+    body.append("access_key", WEB3FORMS_KEY);
+    body.append("subject", form.subject || "Portfolio contact message");
+    body.append("from_name", form.name || "Website visitor");
+    body.append("email", form.email);
+    body.append("message", form.message);
+
+    const response = await fetch(WEB3FORMS_ENDPOINT, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body,
+      signal,
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Message could not be sent.");
+    }
+    return;
+  }
+
+  const response = await fetch(EMAIL_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      name: form.name,
+      email: form.email,
+      subject: form.subject || "Portfolio contact message",
+      message: form.message,
+      _subject: `Portfolio message from ${form.name || "Website visitor"} (${form.email})`,
+      _replyto: form.email,
+      _template: "table",
+      _captcha: "false",
+    }),
+    signal,
+  });
+
+  if (!response.ok) {
+    throw new Error("Message could not be sent.");
+  }
+}
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -24,40 +76,34 @@ export default function Contact() {
     setError("");
     setSent(false);
 
-    try {
-      const response = await fetch(EMAIL_ENDPOINT, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          subject: form.subject || "Portfolio contact message",
-          message: form.message,
-          _subject: `Portfolio message from ${form.name || "Website visitor"} (${form.email})`,
-          _replyto: form.email,
-          _template: "table",
-          _captcha: "false",
-        }),
-      });
+    // The email providers can hang for half a minute when they are unhealthy;
+    // fail fast so the visitor gets the WhatsApp / direct-email alternatives.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
-      if (!response.ok) {
-        throw new Error("Message could not be sent.");
-      }
+    try {
+      await deliverByEmail(form, controller.signal);
 
       setSent(true);
       setTimeout(() => setSent(false), 4000);
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch {
       setError(
-        "Message not sent. Try again, or use WhatsApp below so your message still reaches me.",
+        "The email service did not respond. Send the same message on WhatsApp, or email me directly:",
       );
     } finally {
+      clearTimeout(timeout);
       setSending(false);
     }
   };
+
+  const mailtoHref = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(
+    form.subject || "Portfolio contact message",
+  )}&body=${encodeURIComponent(
+    [form.message, form.name && `From: ${form.name}`, form.email && `Email: ${form.email}`]
+      .filter(Boolean)
+      .join("\n\n"),
+  )}`;
 
   const handleWhatsApp = () => {
     if (!form.message.trim()) {
@@ -229,9 +275,15 @@ export default function Contact() {
                 same message in WhatsApp for a faster reply.
               </p>
               {error && (
-                <p className="mt-3 text-sm text-rose-300">
-                  {error}
-                </p>
+                <div className="mt-3 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3">
+                  <p className="text-sm text-rose-300">{error}</p>
+                  <a
+                    href={mailtoHref}
+                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-rose-200 underline underline-offset-2 hover:text-white"
+                  >
+                    <Mail size={14} /> {CONTACT_EMAIL}
+                  </a>
+                </div>
               )}
             </form>
           </div>

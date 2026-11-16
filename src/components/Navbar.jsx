@@ -45,7 +45,7 @@ export default function Navbar() {
               <a
                 href={link.href}
                 onClick={() => handleNav(link.href)}
-                className={`px-4 py-2 rounded-lg font-sans text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-2 lg:px-4 rounded-lg font-sans text-sm font-medium transition-all duration-200 ${
                   active === link.href.replace("#", "")
                     ? "text-blue-400 bg-blue-500/10"
                     : "text-slate-400 hover:text-white hover:bg-white/5"

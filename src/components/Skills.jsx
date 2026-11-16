@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Code2, Monitor, Server } from "lucide-react";
+import { Code2, Monitor, Network, Server } from "lucide-react";
 import { skills } from "../data/portfolio";
 
 const groupIcons = {
   Code: Code2,
   UI: Monitor,
   API: Server,
+  Network: Network,
 };
 
 function SkillBar({ name, level, delay }) {
@@ -70,10 +71,10 @@ export default function Skills() {
         <SectionHeader
           label="// expertise"
           title="Technical Skills"
-          subtitle="A polyglot developer comfortable across languages, frameworks, and platforms — from browser to desktop."
+          subtitle="A polyglot developer comfortable across languages, frameworks, and platforms — from browser to desktop, plus hands-on network installation and support."
         />
 
-        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:gap-6 sm:grid-cols-2">
           {skills.map((group, gi) => {
             const Icon = groupIcons[group.icon];
             return (

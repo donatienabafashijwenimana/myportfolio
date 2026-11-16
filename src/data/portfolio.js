@@ -39,6 +39,18 @@ export const skills = [
       { name: "PyQt", level: 78 },
     ],
   },
+  {
+    category: "Networking",
+    icon: "Network",
+    items: [
+      { name: "Network Design & Installation", level: 90 },
+      { name: "Router & Switch Configuration", level: 88 },
+      { name: "VLANs & Subnetting", level: 85 },
+      { name: "TCP/IP, DNS & DHCP", level: 90 },
+      { name: "Wi-Fi & Structured Cabling", level: 86 },
+      { name: "Network Troubleshooting", level: 92 },
+    ],
+  },
 ];
 
 export const projects = [
@@ -218,6 +230,7 @@ export const projects = [
 export const navLinks = [
   { label: "Home", href: "#home" },
   { label: "Skills", href: "#skills" },
+  { label: "Services", href: "#services" },
   { label: "Projects", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
