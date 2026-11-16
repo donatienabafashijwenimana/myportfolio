@@ -3,17 +3,35 @@
 @tailwind utilities;
 
 @layer base {
-  * { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     background-color: #050d1a;
     color: #e2e8f0;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
     overflow-x: hidden;
+  }
+  /* Fixed navbar would otherwise cover the headings when jumping to a section. */
+  section[id] {
+    scroll-margin-top: 5rem;
   }
   ::selection { background: #3b82f6; color: white; }
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: #0a1628; }
   ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 @layer utilities {

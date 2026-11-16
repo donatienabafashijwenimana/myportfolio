@@ -4,9 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'DM Sans'", "sans-serif"],
-        display: ["'Syne'", "sans-serif"],
-        mono: ["'JetBrains Mono'", "monospace"],
+        sans: ["'Space Grotesk'", "system-ui", "sans-serif"],
+        display: ["'Space Grotesk'", "system-ui", "sans-serif"],
+        mono: ["'Space Grotesk'", "ui-monospace", "monospace"],
       },
       colors: {
         navy: {
@@ -28,6 +28,7 @@ export default {
         float: "float 3s ease-in-out infinite",
         "pulse-slow": "pulse 3s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
+        marquee: "marquee 40s linear infinite",
       },
       keyframes: {
         fadeUp: {
@@ -45,6 +46,10 @@ export default {
         shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
     },

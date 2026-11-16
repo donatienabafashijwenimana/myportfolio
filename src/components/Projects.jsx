@@ -4,23 +4,23 @@ import { SectionHeader } from "./Skills";
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="absolute right-0 top-1/4 w-96 h-96 rounded-full bg-violet-600/8 blur-[100px] pointer-events-none" />
+    <section id="projects" className="relative py-16 md:py-24">
+      <div className="absolute right-0 top-1/4 w-72 sm:w-96 h-72 sm:h-96 rounded-full bg-violet-600/10 blur-[100px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
           label="// portfolio"
           title="Featured Projects"
           subtitle="Real-world software built across multiple stacks and platforms."
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.title} project={project} index={i} />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          {projects.map((project) => (
+            <ProjectCard key={project.github} project={project} />
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-10 md:mt-12">
           <a
             href="https://github.com/donatienabafashijwenimana"
             target="_blank"
@@ -38,29 +38,39 @@ export default function Projects() {
 
 function ProjectCard({ project }) {
   return (
-    <div className="glass rounded-2xl overflow-hidden group hover:border-white/15 transition-all duration-300 hover:-translate-y-2 flex flex-col">
+    <article className="glass rounded-2xl overflow-hidden group hover:border-white/15 transition-all duration-300 hover:-translate-y-2 flex flex-col">
       {/* Gradient header */}
-      <div className={`h-32 bg-gradient-to-br ${project.color} relative overflow-hidden flex items-center justify-center`}>
-        <span className="text-5xl">{project.icon}</span>
+      <div className={`relative flex h-24 sm:h-32 items-center justify-center overflow-hidden bg-gradient-to-br ${project.color}`}>
         <div className="absolute inset-0 bg-black/20" />
+        <span className="relative z-10 rounded-xl border border-white/25 bg-black/25 px-3 py-1.5 font-mono text-xs sm:text-sm font-medium tracking-wide text-white backdrop-blur-sm">
+          {project.icon}
+        </span>
+        {project.collaboration && (
+          <span
+            title={project.collaboration}
+            className="absolute right-2 top-2 z-10 rounded-full border border-white/25 bg-black/30 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-white/85 backdrop-blur-sm"
+          >
+            Team
+          </span>
+        )}
         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-navy-950/80 to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="font-display font-700 text-white text-lg mb-2">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <h3 className="mb-2 font-display text-base sm:text-lg font-bold leading-snug text-white break-words">
           {project.title}
         </h3>
-        <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-1">
+        <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-400">
           {project.description}
         </p>
 
         {/* Tech tags */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
+        <div className="mb-4 flex flex-wrap gap-1.5">
           {project.tech.map((t) => (
             <span
               key={t}
-              className="px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-mono"
+              className="rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 font-mono text-[11px] sm:text-xs text-blue-300"
             >
               {t}
             </span>
@@ -68,12 +78,12 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Links */}
-        <div className="flex gap-3 pt-3 border-t border-white/5">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/5 pt-3">
           <a
             href={project.github}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 text-slate-500 hover:text-white text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-white"
           >
             <GitFork size={14} />
             Code
@@ -83,7 +93,7 @@ function ProjectCard({ project }) {
               href={project.live}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 text-slate-500 hover:text-blue-400 text-xs font-medium transition-colors ml-auto"
+              className="ml-auto flex items-center gap-1.5 text-xs font-medium text-slate-500 transition-colors hover:text-blue-400"
             >
               Live Demo
               <ExternalLink size={14} />
@@ -91,6 +101,6 @@ function ProjectCard({ project }) {
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }
